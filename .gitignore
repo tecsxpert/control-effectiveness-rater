@@ -1,0 +1,35 @@
+# Environment
+.env
+
+# Java / Maven
+target/
+*.class
+*.jar
+*.war
+.idea/
+*.iml
+.settings/
+.project
+.classpath
+
+# Node / Frontend
+node_modules/
+dist/
+.vite/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.env/
+
+# ChromaDB
+chroma_data/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+*.log
