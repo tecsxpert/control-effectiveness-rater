@@ -4,6 +4,9 @@ import Navbar from './components/Navbar';
 import ListPage from './pages/ListPage';
 import FormPage from './pages/FormPage';
 import LoginPage from './pages/LoginPage';
+import DashboardPage from './pages/DashboardPage';
+import DetailPage from './pages/DetailPage';
+import EditPage from './pages/EditPage';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
@@ -14,14 +17,19 @@ function App() {
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/" element={
-            <ProtectedRoute>
-              <ListPage />
-            </ProtectedRoute>
+            <ProtectedRoute><DashboardPage /></ProtectedRoute>
+          } />
+          <Route path="/list" element={
+            <ProtectedRoute><ListPage /></ProtectedRoute>
           } />
           <Route path="/create" element={
-            <ProtectedRoute>
-              <FormPage />
-            </ProtectedRoute>
+            <ProtectedRoute><FormPage /></ProtectedRoute>
+          } />
+          <Route path="/detail/:id" element={
+            <ProtectedRoute><DetailPage /></ProtectedRoute>
+          } />
+          <Route path="/edit/:id" element={
+            <ProtectedRoute><EditPage /></ProtectedRoute>
           } />
         </Routes>
       </BrowserRouter>
