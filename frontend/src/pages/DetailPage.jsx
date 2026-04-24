@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import AiPanel from '../components/AiPanel';
 import { useParams, useNavigate } from 'react-router-dom';
 import API from '../services/api';
 

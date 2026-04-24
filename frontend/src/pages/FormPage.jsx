@@ -1,3 +1,4 @@
+import FileUpload from '../components/FileUpload';
 import { useState } from 'react';
 import API from '../services/api';
 
@@ -114,6 +115,7 @@ export default function FormPage() {
           Create Control
         </button>
       </div>
+    <FileUpload />
     </div>
   );
 }
