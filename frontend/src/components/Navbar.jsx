@@ -11,6 +11,7 @@ export default function Navbar() {
         <div className="space-x-4">
           <Link to="/" className="hover:underline">Dashboard</Link>
           <Link to="/list" className="hover:underline">List</Link>
+          <Link to="/analytics" className="hover:underline">Analytics</Link>
           <Link to="/create" className="hover:underline">Create New</Link>
           <button onClick={logout} className="hover:underline">Logout</button>
         </div>

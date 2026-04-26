@@ -7,6 +7,7 @@ import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import DetailPage from './pages/DetailPage';
 import EditPage from './pages/EditPage';
+import AnalyticsPage from './pages/AnalyticsPage';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
@@ -30,6 +31,9 @@ function App() {
           } />
           <Route path="/edit/:id" element={
             <ProtectedRoute><EditPage /></ProtectedRoute>
+          } />
+          <Route path="/analytics" element={
+            <ProtectedRoute><AnalyticsPage /></ProtectedRoute>
           } />
         </Routes>
       </BrowserRouter>
