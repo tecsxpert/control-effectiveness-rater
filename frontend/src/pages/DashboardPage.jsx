@@ -39,7 +39,7 @@ export default function DashboardPage() {
       <h2 className="text-2xl font-bold mb-6">Dashboard</h2>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         <div className="bg-blue-800 text-white p-6 rounded shadow text-center">
           <p className="text-4xl font-bold">{stats.total}</p>
           <p className="mt-2">Total Controls</p>
