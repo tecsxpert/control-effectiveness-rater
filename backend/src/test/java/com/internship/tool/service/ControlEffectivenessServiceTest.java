@@ -217,6 +217,125 @@ class ControlEffectivenessServiceTest {
         assertEquals(72.5, stats.getAverageScore());
     }
 
+    @Test
+    @DisplayName("11. update — throws ResourceNotFoundException when control not found")
+    void testUpdate_notFound() {
+        when(repository.findByIdAndIsDeletedFalse(999L)).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> service.update(999L, sampleRequest));
+        verify(repository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("12. softDelete — throws ResourceNotFoundException when control not found")
+    void testSoftDelete_notFound() {
+        when(repository.findByIdAndIsDeletedFalse(999L)).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> service.softDelete(999L));
+        verify(repository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("13. search — returns results for a valid query")
+    void testSearch_validQuery() {
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<ControlEffectiveness> page = new PageImpl<>(List.of(sampleEntity));
+        when(repository.searchByQuery("firewall", pageable)).thenReturn(page);
+
+        Page<ControlEffectivenessResponse> result = service.search("firewall", pageable);
+
+        assertEquals(1, result.getTotalElements());
+        assertEquals("Firewall Rule Review", result.getContent().get(0).getControlName());
+        verify(repository).searchByQuery("firewall", pageable);
+    }
+
+    @Test
+    @DisplayName("14. filter — returns filtered results by status")
+    void testFilter_byStatus() {
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<ControlEffectiveness> page = new PageImpl<>(List.of(sampleEntity));
+        when(repository.findByFilters("COMPLETED", null, null, null, null, pageable)).thenReturn(page);
+
+        Page<ControlEffectivenessResponse> result = service.filter("COMPLETED", null, null, null, null, pageable);
+
+        assertEquals(1, result.getTotalElements());
+        assertEquals("COMPLETED", result.getContent().get(0).getStatus());
+    }
+
+    @Test
+    @DisplayName("15. getAllForExport — returns all non-deleted controls as a list")
+    void testGetAllForExport() {
+        when(repository.findByIsDeletedFalse()).thenReturn(List.of(sampleEntity));
+
+        List<ControlEffectivenessResponse> result = service.getAllForExport();
+
+        assertEquals(1, result.size());
+        assertEquals("Firewall Rule Review", result.get(0).getControlName());
+        verify(repository).findByIsDeletedFalse();
+    }
+
+    @Test
+    @DisplayName("16. triggerAiRecommendation — stores AI response when AI returns successfully")
+    void testTriggerAiRecommendation_success() {
+        when(repository.findByIdAndIsDeletedFalse(1L)).thenReturn(Optional.of(sampleEntity));
+        when(aiServiceClient.recommend(anyString(), anyString(), anyString(), any(Integer.class)))
+                .thenReturn("{\"recommendations\":[]}");
+        when(repository.save(any(ControlEffectiveness.class))).thenReturn(sampleEntity);
+
+        ControlEffectivenessResponse result = service.triggerAiRecommendation(1L);
+
+        assertNotNull(result);
+        assertFalse(sampleEntity.getIsFallback());
+        verify(aiServiceClient).recommend(anyString(), anyString(), anyString(), any(Integer.class));
+    }
+
+    @Test
+    @DisplayName("17. triggerAiRecommendation — throws ResourceNotFoundException when control not found")
+    void testTriggerAiRecommendation_notFound() {
+        when(repository.findByIdAndIsDeletedFalse(999L)).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> service.triggerAiRecommendation(999L));
+    }
+
+    @Test
+    @DisplayName("18. triggerAiRecommendation — sets isFallback=true when AI returns null")
+    void testTriggerAiRecommendation_aiFallback() {
+        when(repository.findByIdAndIsDeletedFalse(1L)).thenReturn(Optional.of(sampleEntity));
+        when(aiServiceClient.recommend(anyString(), anyString(), anyString(), any(Integer.class)))
+                .thenReturn(null);
+        when(repository.save(any(ControlEffectiveness.class))).thenReturn(sampleEntity);
+
+        ControlEffectivenessResponse result = service.triggerAiRecommendation(1L);
+
+        assertNotNull(result);
+        assertTrue(sampleEntity.getIsFallback());
+    }
+
+    @Test
+    @DisplayName("19. triggerAiReport — stores AI report when AI returns successfully")
+    void testTriggerAiReport_success() {
+        when(repository.findByIdAndIsDeletedFalse(1L)).thenReturn(Optional.of(sampleEntity));
+        when(aiServiceClient.generateReport(anyString(), anyString(), anyString(),
+                anyString(), any(Integer.class), anyString()))
+                .thenReturn("{\"title\":\"Report\",\"summary\":\"Test summary\"}");
+        when(repository.save(any(ControlEffectiveness.class))).thenReturn(sampleEntity);
+
+        ControlEffectivenessResponse result = service.triggerAiReport(1L);
+
+        assertNotNull(result);
+        assertFalse(sampleEntity.getIsFallback());
+        verify(aiServiceClient).generateReport(anyString(), anyString(), anyString(),
+                anyString(), any(Integer.class), anyString());
+    }
+
+    @Test
+    @DisplayName("20. triggerAiReport — throws ResourceNotFoundException when control not found")
+    void testTriggerAiReport_notFound() {
+        when(repository.findByIdAndIsDeletedFalse(999L)).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> service.triggerAiReport(999L));
+    }
+
     private void mockSecurityContext(String username) {
         Authentication auth = mock(Authentication.class);
         when(auth.getName()).thenReturn(username);
