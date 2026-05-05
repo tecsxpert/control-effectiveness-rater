@@ -1,34 +1,33 @@
-\# Control Effectiveness Rater
+# Tool-124 — Control Effectiveness Rater
 
+## Overview
+Full-stack web application to track and manage security control effectiveness.
 
+## Architecture
+React Frontend (port 5173) → Spring Boot Backend (port 8080) → H2 Database
 
-An AI-powered web application for rating control effectiveness.
+## Tech Stack
+- Java 17 + Spring Boot 3.x
+- React 18 + Vite + Tailwind CSS
+- H2 In-Memory Database
+- Swagger UI
 
+## Prerequisites
+- Java 17
+- Node.js 18+
+- Maven
 
+## Setup
 
-\## Team
+### Backend
+cd backend
+mvn spring-boot:run
 
-\- Java Developer 1
+### Frontend
+cd frontend
+npm install
+npm run dev
 
-\- Java Developer 2
-
-\- AI Developer 1
-
-\- AI Developer 2
-
-
-
-\## Sprint
-
-14 April – 9 May 2026
-
-
-
-\## Status
-
-Day 1 — Flyway V1 migration done
-
-Day 2 — React setup done
-
-Day 3 — List page and V2 migration done
-
+## Access
+- Frontend: http://localhost:5173
+- Swagger: http://localhost:8080/swagger-ui.html
