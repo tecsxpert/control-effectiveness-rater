@@ -45,4 +45,17 @@ export default function DashboardPage() {
           <p className="mt-2">Total Controls</p>
         </div>
         <div className="bg-green-600 text-white p-6 rounded shadow text-center">
-          <p className="text-4xl font-bold">{stats.a
+          <p className="mt-2">Active Controls</p>
+        </div>
+        <div className="bg-yellow-500 text-white p-6 rounded shadow text-center">
+          <p className="text-4xl font-bold">{stats.pending}</p>
+          <p className="mt-2">Pending</p>
+        </div>
+        <div className="bg-red-600 text-white p-6 rounded shadow text-center">
+          <p className="text-4xl font-bold">{stats.inactive}</p>
+          <p className="mt-2">Inactive</p>
+        </div>
+      </div>
+    </div>
+  );
+}
