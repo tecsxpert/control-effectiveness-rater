@@ -43,12 +43,13 @@ public class ControlEffectivenessService {
         this.aiServiceClient = aiServiceClient;
     }
 
-    @Cacheable(value = "controls", key = "'all-' + #pageable.pageNumber + '-' + #pageable.pageSize")
+    @Transactional(readOnly = true)
     public Page<ControlEffectivenessResponse> getAll(Pageable pageable) {
         return repository.findByIsDeletedFalse(pageable)
                 .map(ControlEffectivenessResponse::fromEntity);
     }
 
+    @Transactional(readOnly = true)
     @Cacheable(value = "controls", key = "'id-' + #id")
     public ControlEffectivenessResponse getById(Long id) {
         ControlEffectiveness entity = repository.findByIdAndIsDeletedFalse(id)
@@ -115,7 +116,7 @@ public class ControlEffectivenessService {
         repository.save(entity);
     }
 
-    @Cacheable(value = "controls", key = "'search-' + #query + '-' + #pageable.pageNumber")
+    @Transactional(readOnly = true)
     public Page<ControlEffectivenessResponse> search(String query, Pageable pageable) {
         if (query == null || query.trim().isEmpty()) {
             throw new BadRequestException("Search query cannot be empty");
@@ -124,6 +125,7 @@ public class ControlEffectivenessService {
                 .map(ControlEffectivenessResponse::fromEntity);
     }
 
+    @Transactional(readOnly = true)
     public Page<ControlEffectivenessResponse> filter(String status, String category,
                                                       String riskLevel, LocalDate startDate,
                                                       LocalDate endDate, Pageable pageable) {
@@ -173,6 +175,7 @@ public class ControlEffectivenessService {
                 .build();
     }
 
+    @Transactional(readOnly = true)
     public List<ControlEffectivenessResponse> getAllForExport() {
         return repository.findByIsDeletedFalse().stream()
                 .map(ControlEffectivenessResponse::fromEntity)

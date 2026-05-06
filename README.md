@@ -1,9 +1,9 @@
 # Tool-124 — Control Effectiveness Rater
 
-**An AI-powered web application that helps organizations check how well their security controls are working.**
+An AI-powered web application that helps organizations check how well their security controls are working.
 
 Built as a capstone internship project by a team of 5.
-Sprint: 14 April – 9 May 2026 | Demo Day: 9 May 2026
+**Sprint:** 14 April – 9 May 2026 | **Demo Day:** 9 May 2026
 
 ---
 
@@ -12,7 +12,8 @@ Sprint: 14 April – 9 May 2026 | Demo Day: 9 May 2026
 Every company has security controls — things like firewalls, access control policies, data encryption, and password rules. The problem is: how do you know if they are actually working?
 
 This tool lets you:
-- **Add** a security control and give it a score (0–100) based on how effective it is
+
+- **Add a security control** and give it a score (0–100) based on how effective it is
 - **Get AI analysis** — the AI (powered by Groq's LLaMA model) automatically reads the control details and gives you a written description, recommendations to improve it, and a full report
 - **Track everything** — see which controls are pending, in progress, completed, or reviewed
 - **Search and filter** — find controls by name, category, risk level, or date
@@ -24,7 +25,7 @@ This tool lets you:
 
 ## My Role — Java Developer 1
 
-I was responsible for the entire **Spring Boot backend** — the core engine that powers this application.
+I was responsible for the entire Spring Boot backend — the core engine that powers this application.
 
 Here is exactly what I built:
 
@@ -39,43 +40,77 @@ Wrote all the business logic — input validation, error handling, and the rules
 
 ### 4. REST API — All Endpoints (Day 4)
 Built all the API endpoints that the frontend calls:
-- `GET /api/controls/all` — get all controls (with pagination)
-- `POST /api/controls/create` — create a new control
-- `PUT /api/controls/{id}` — update a control
-- `DELETE /api/controls/{id}` — soft delete (data is never actually removed)
-- `GET /api/controls/search` — search by keyword
-- `GET /api/controls/filter` — filter by status, category, risk level, date
-- `GET /api/controls/stats` — dashboard statistics
-- `GET /api/controls/export` — download everything as a CSV file
+
+| Method | URL | What it does |
+|--------|-----|--------------|
+| GET | `/api/controls/all` | Get all controls (with pagination) |
+| POST | `/api/controls/create` | Create a new control |
+| PUT | `/api/controls/{id}` | Update a control |
+| DELETE | `/api/controls/{id}` | Soft delete (data is never actually removed) |
+| GET | `/api/controls/search` | Search by keyword |
+| GET | `/api/controls/filter` | Filter by status, category, risk level, date |
+| GET | `/api/controls/stats` | Dashboard statistics |
+| GET | `/api/controls/export` | Download everything as a CSV file |
 
 ### 5. JWT Authentication (Day 5)
 Built the entire login system using JWT (JSON Web Tokens):
-- `POST /api/auth/register` — create an account
-- `POST /api/auth/login` — login and get a token
-- `POST /api/auth/refresh` — get a new token when the old one expires
+
+| Method | URL | What it does |
+|--------|-----|--------------|
+| POST | `/api/auth/register` | Create an account |
+| POST | `/api/auth/login` | Login and get a token |
+| POST | `/api/auth/refresh` | Get a new token when the old one expires |
 
 Every protected endpoint checks for a valid token before allowing access. Admin users have extra permissions (like delete).
 
 ### 6. Redis Caching + Role-Based Access Control (Day 6)
 Added Redis caching so frequently read data (like the controls list and stats) is served from memory instead of hitting the database every time. Cache refreshes automatically every 10 minutes or whenever data changes.
 
-Also added RBAC — `USER` role can read and write, `ADMIN` role can also delete.
+Also added RBAC — USER role can read and write, ADMIN role can also delete.
 
 ### 7. Email Notifications (Day 7)
-Built an automated email system using JavaMailSender and Thymeleaf HTML templates:
+Built an automated email system using `JavaMailSender` and Thymeleaf HTML templates:
+
 - Every day at **8:00 AM** — sends reminders for overdue controls
 - Every day at **6:00 PM** — sends alerts for controls whose review is due tomorrow
 
 ### 8. Error Handling + Unit Tests (Day 8)
 Built a `@ControllerAdvice` global exception handler — every error (400, 401, 404, 500) returns the same clean JSON format so the frontend always knows what to expect.
 
-Wrote **20 JUnit 5 unit tests** using Mockito covering every service method — 80%+ code coverage verified with JaCoCo.
+Wrote 20 JUnit 5 unit tests using Mockito covering every service method — 80%+ code coverage verified with JaCoCo.
 
 ### 9. Docker Compose (Day 9)
 Set up the `docker-compose.yml` that starts all 5 services with one command. Every service has health checks so they only start when their dependencies are ready.
 
 ### 10. Data Seeder + README (Days 12–13)
-Built a `DataSeeder` that automatically loads **30 realistic security control records** into the database on first startup — so the app is demo-ready immediately with no manual setup.
+Built a `DataSeeder` that automatically loads 30 realistic security control records into the database on first startup — so the app is demo-ready immediately with no manual setup.
+
+---
+
+## Teammate's Role — Java Developer 2
+
+| Area | What was built |
+|------|----------------|
+| Database schema | Full Flyway migration scripts — users table, controls table, audit log table (`V1__init.sql`, `V2__audit_log.sql`) |
+| React frontend | All pages, navigation, forms, and layout |
+| Search and filter | Debounced search bar with multi-field filtering |
+| Dashboard | KPI cards and Recharts bar charts showing scores and statuses |
+| Audit log UI | Page that displays all recorded system actions |
+| Analytics page | Trend charts showing control scores over time |
+| CSV export + file upload | Export button and file upload flow in the UI |
+| AI panel | Buttons that call the AI endpoints and display results inline |
+| Responsive design | Works on mobile, tablet, and desktop |
+| Swagger docs | OpenAPI documentation wired to all endpoints |
+| Demo video | Recorded and edited the project demo |
+
+---
+
+## AI Team Roles
+
+| Role | Responsibility |
+|------|----------------|
+| AI Developer 1 | Flask microservice setup, `/describe` and `/recommend` endpoints |
+| AI Developer 2 | Groq API client (`groq_client.py`), `/generate-report` endpoint, security review of AI responses |
 
 ---
 
@@ -102,17 +137,15 @@ User (Browser)
              └─────────────┘        └──────────────┘
 ```
 
-### In simple terms:
-
 | Service | What it does | Technology |
 |---------|-------------|------------|
-| **Frontend** | The web page the user sees and clicks on | React, Tailwind CSS |
-| **Java Backend** | Handles all requests, business logic, security, database | Java 17, Spring Boot |
-| **AI Service** | Takes control data and uses AI to generate analysis | Python, Flask, Groq API |
-| **PostgreSQL** | The main database — stores all controls, users, audit logs | PostgreSQL 15 |
-| **Redis** | Fast memory cache — stores recent results to avoid slow DB calls | Redis 7 |
+| Frontend | The web page the user sees and clicks on | React, Tailwind CSS |
+| Java Backend | Handles all requests, business logic, security, database | Java 17, Spring Boot |
+| AI Service | Takes control data and uses AI to generate analysis | Python, Flask, Groq API |
+| PostgreSQL | The main database — stores all controls, users, audit logs | PostgreSQL 15 |
+| Redis | Fast memory cache — stores recent results to avoid slow DB calls | Redis 7 |
 
-### The AI part explained simply:
+**The AI part explained simply:**
 When you create a security control, the Java backend sends the control details to the AI service in the background. The AI service sends those details to Groq's LLaMA 3.3 70B model (a large language model, like ChatGPT but free). The model reads the control and writes back a description, 3 recommendations, and a full report. All of this is stored in the database and shown to the user.
 
 ---
@@ -150,14 +183,14 @@ Once you see that, everything is running.
 | Check everything is healthy | http://localhost:8080/actuator/health |
 | Try all API endpoints | http://localhost:8080/swagger-ui.html |
 | AI service status | http://localhost:5000/health |
-| Frontend | http://localhost |
+| Frontend | http://localhost:3000/login |
 
 ### Default login accounts
 
 | Username | Password | Role |
 |----------|----------|------|
-| `admin` | `admin123` | Admin — can do everything including delete |
-| `analyst` | `analyst123` | User — can create, read, and update |
+| admin | admin123 | Admin — can do everything including delete |
+| analyst | analyst123 | User — can create, read, and update |
 
 The database comes pre-loaded with 30 realistic security control records automatically.
 
@@ -203,6 +236,7 @@ control-effectiveness-rater/
 ## All API Endpoints
 
 ### Login (no token needed)
+
 | Method | URL | What it does |
 |--------|-----|--------------|
 | POST | `/api/auth/register` | Create a new account |
@@ -210,6 +244,7 @@ control-effectiveness-rater/
 | POST | `/api/auth/refresh` | Get a new token when old one expires |
 
 ### Controls (JWT token required)
+
 | Method | URL | What it does |
 |--------|-----|--------------|
 | GET | `/api/controls/all` | Get all controls (10 per page) |
@@ -225,6 +260,7 @@ control-effectiveness-rater/
 | POST | `/api/controls/{id}/ai/report` | Ask AI to generate a full report |
 
 ### Audit Log (admin only)
+
 | Method | URL | What it does |
 |--------|-----|--------------|
 | GET | `/api/audit` | See all recorded actions |
@@ -235,11 +271,11 @@ control-effectiveness-rater/
 ## Team
 
 | Role | Responsibility |
-|------|---------------|
-| **Java Developer 1** (me) | Spring Boot backend, JWT auth, Redis caching, email notifications, Docker Compose, data seeder, unit tests |
-| Java Developer 2 | Database schema (Flyway migrations), React frontend |
-| AI Developer 1 | Flask setup, `/describe` and `/recommend` AI endpoints |
-| AI Developer 2 | Groq API client, `/generate-report` endpoint, security review |
+|------|----------------|
+| **Java Developer 1 (me)** | Spring Boot backend, JWT auth, Redis caching, email notifications, Docker Compose, data seeder, unit tests |
+| **Java Developer 2** | Database schema (Flyway migrations), React frontend |
+| **AI Developer 1** | Flask setup, `/describe` and `/recommend` AI endpoints |
+| **AI Developer 2** | Groq API client, `/generate-report` endpoint, security review |
 
 ---
 
